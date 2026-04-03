@@ -53,24 +53,37 @@ const MOCK_RESULTS = {
 function Results() {
   const location = useLocation()
   const navigate = useNavigate()
+  
+  // Safe fallback if state is missing (e.g., page refresh)
   const scannedUrl = location.state?.url || 'example.com'
 
   return (
     <main className="max-w-5xl mx-auto px-4 py-12 animate-in slide-in-from-bottom-4 duration-700">
       {/* Header / Back Navigation */}
-      <div className="flex items-center justify-between mb-12">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={() => navigate('/')}
+            className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors group px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl"
+          >
+            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+            <span className="hidden sm:inline">Back</span>
+          </button>
+          
+          <div className="flex items-center gap-3 bg-slate-900 px-4 py-2 rounded-xl border border-slate-800 shadow-xl">
+            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+            <span className="text-sm font-medium text-slate-300 truncate max-w-[150px] sm:max-w-xs">{scannedUrl}</span>
+            <ExternalLink className="w-4 h-4 text-slate-500" />
+          </div>
+        </div>
+
         <button 
           onClick={() => navigate('/')}
-          className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors group"
+          className="bg-primary-600/10 hover:bg-primary-600/20 text-primary-400 border border-primary-500/20 px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 active:scale-95"
         >
-          <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-          <span>Back to Audit</span>
+          <Search className="w-4 h-4" />
+          Scan Another Website
         </button>
-        <div className="flex items-center gap-3 bg-slate-900 px-4 py-2 rounded-full border border-slate-800 shadow-xl">
-          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-          <span className="text-sm font-medium text-slate-300">{scannedUrl}</span>
-          <ExternalLink className="w-4 h-4 text-slate-500" />
-        </div>
       </div>
 
       {/* Summary Score Card */}

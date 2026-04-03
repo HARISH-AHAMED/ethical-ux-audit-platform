@@ -4,17 +4,60 @@ import { Search, Info, ShieldCheck, AlertTriangle } from 'lucide-react'
 
 function Home() {
   const [url, setUrl] = useState('')
+  const [isScanning, setIsScanning] = useState(false)
+  const [error, setError] = useState('')
+  const [loadingMessage, setLoadingMessage] = useState('')
   const navigate = useNavigate()
+
+  const validateUrl = (input) => {
+    if (!input) return "Please enter a website URL."
+    const pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+      '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+    return pattern.test(input) ? "" : "Please enter a valid URL (e.g., example.com)."
+  }
 
   const handleAudit = (e) => {
     e.preventDefault()
-    if (!url) return
-    // Passing URL state to the results page
-    navigate('/results', { state: { url } })
+    const validationError = validateUrl(url)
+    if (validationError) {
+      setError(validationError)
+      return
+    }
+
+    setError('')
+    setIsScanning(true)
+    
+    // Mock sequential loading messages
+    setLoadingMessage('Initializing audit engine...')
+    
+    setTimeout(() => setLoadingMessage('Analyzing interface patterns...'), 700)
+    setTimeout(() => setLoadingMessage('Scanning for deceptive UX signals...'), 1400)
+    
+    setTimeout(() => {
+      navigate('/results', { state: { url } })
+    }, 2200)
   }
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 animate-in fade-in duration-700">
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 animate-in fade-in duration-700 relative">
+      {/* Loading Overlay */}
+      {isScanning && (
+        <div className="fixed inset-0 z-[60] bg-slate-950/80 backdrop-blur-md flex flex-col items-center justify-center space-y-6">
+          <div className="relative w-20 h-20">
+            <div className="absolute inset-0 border-4 border-primary-500/20 rounded-full"></div>
+            <div className="absolute inset-0 border-4 border-t-primary-500 rounded-full animate-spin"></div>
+          </div>
+          <div className="text-center space-y-2">
+            <h3 className="text-2xl font-bold text-white animate-pulse">{loadingMessage}</h3>
+            <p className="text-slate-400 text-sm">Target: {url}</p>
+          </div>
+        </div>
+      )}
+
       <div className="text-center space-y-8">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-400 text-sm font-medium mb-4">
           <Info className="w-4 h-4" />
@@ -33,26 +76,36 @@ function Home() {
 
         <form onSubmit={handleAudit} className="max-w-3xl mx-auto mt-10">
           <div className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-primary-500 to-primary-700 rounded-2xl blur opacity-25 group-focus-within:opacity-50 transition duration-1000"></div>
-            <div className="relative flex items-center bg-slate-900 border border-slate-800 rounded-xl p-2 shadow-2xl">
+            <div className={`absolute -inset-1 bg-gradient-to-r from-primary-500 to-primary-700 rounded-2xl blur opacity-25 group-focus-within:opacity-50 transition duration-1000 ${error ? 'from-red-500 to-red-700 opacity-40' : ''}`}></div>
+            <div className={`relative flex items-center bg-slate-900 border ${error ? 'border-red-500/50' : 'border-slate-800'} rounded-xl p-2 shadow-2xl transition-colors`}>
               <div className="flex-1 flex items-center px-4 gap-3">
-                <Search className="w-5 h-5 text-slate-500" />
+                <Search className={`w-5 h-5 ${error ? 'text-red-400' : 'text-slate-500'}`} />
                 <input
                   type="text"
                   placeholder="Enter website URL (e.g., example.com)"
                   className="w-full bg-transparent border-none focus:ring-0 text-slate-100 placeholder:text-slate-600 py-3"
                   value={url}
-                  onChange={(e) => setUrl(e.target.value)}
+                  onChange={(e) => {
+                    setUrl(e.target.value)
+                    if (error) setError('')
+                  }}
                 />
               </div>
               <button 
                 type="submit"
-                className="bg-primary-600 hover:bg-primary-500 text-white px-8 py-3 rounded-lg font-bold transition-all whitespace-nowrap active:scale-95"
+                disabled={isScanning}
+                className="bg-primary-600 hover:bg-primary-500 text-white px-8 py-3 rounded-lg font-bold transition-all whitespace-nowrap active:scale-95 disabled:opacity-50"
               >
                 Scan Website
               </button>
             </div>
           </div>
+          
+          {error && (
+            <div className="mt-3 text-red-400 text-sm font-medium flex items-center justify-center gap-2 animate-in slide-in-from-top-2">
+              <AlertTriangle className="w-4 h-4" /> {error}
+            </div>
+          )}
           
           <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm text-slate-500 font-medium">
             <span className="flex items-center gap-2">
