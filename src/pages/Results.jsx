@@ -2,12 +2,13 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { 
   ArrowLeft, 
   AlertCircle, 
-  CheckCircle2, 
+  CheckCircle, 
   AlertTriangle, 
-  ShieldAlert,
+  Shield,
   ArrowRight,
   ExternalLink,
-  Info
+  Info,
+  Search
 } from 'lucide-react'
 
 // Mock Audit Data
@@ -20,7 +21,7 @@ const MOCK_RESULTS = {
       severity: 'High',
       description: 'The website prevents access to pricing information until a user creates an account.',
       suggestion: 'Allow users to view essential information like pricing and features without prior registration.',
-      icon: ShieldAlert,
+      icon: Shield,
       color: 'text-red-500',
       bg: 'bg-red-500/10',
       border: 'border-red-500/20'
@@ -90,7 +91,7 @@ function Results() {
       <div className="grid md:grid-cols-3 gap-8 mb-16">
         <div className="md:col-span-2 bg-slate-900 border border-slate-800 rounded-3xl p-8 flex flex-col justify-between relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-            <ShieldAlert className="w-40 h-40" />
+            <Shield className="w-40 h-40" />
           </div>
           <div>
             <h2 className="text-3xl font-bold mb-4">Audit Summary</h2>
@@ -148,23 +149,25 @@ function Results() {
           Detected Dark Patterns
         </h3>
 
-        {MOCK_RESULTS.patterns.map((pattern) => (
-          <div 
-            key={pattern.id}
-            className={`p-1 rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-800 hover:border-slate-700 transition-all shadow-xl group`}
-          >
-            <div className="p-6 md:p-8 flex flex-col md:flex-row gap-8 items-start">
-              <div className={`${pattern.bg} ${pattern.color} p-4 rounded-2xl`}>
-                <pattern.icon className="w-8 h-8" />
-              </div>
-              
-              <div className="flex-1 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-2xl font-bold">{pattern.type}</h4>
-                  <span className={`text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full border ${pattern.border} ${pattern.color}`}>
-                    {pattern.severity}
-                  </span>
+        {MOCK_RESULTS.patterns.map((pattern) => {
+          const Icon = pattern.icon
+          return (
+            <div 
+              key={pattern.id}
+              className={`p-1 rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-800 hover:border-slate-700 transition-all shadow-xl group`}
+            >
+              <div className="p-6 md:p-8 flex flex-col md:flex-row gap-8 items-start">
+                <div className={`${pattern.bg} ${pattern.color} p-4 rounded-2xl`}>
+                  <Icon className="w-8 h-8" />
                 </div>
+                
+                <div className="flex-1 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-2xl font-bold">{pattern.type}</h4>
+                    <span className={`text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full border ${pattern.border} ${pattern.color}`}>
+                      {pattern.severity}
+                    </span>
+                  </div>
                 
                 <p className="text-slate-400 leading-relaxed">
                   {pattern.description}
@@ -172,7 +175,7 @@ function Results() {
 
                 <div className="pt-4 border-t border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="flex items-start gap-2">
-                    <CheckCircle2 className="w-5 h-5 text-green-500 mt-1 flex-shrink-0" />
+                    <CheckCircle className="w-5 h-5 text-green-500 mt-1 flex-shrink-0" />
                     <div>
                       <p className="text-xs font-bold text-slate-500 uppercase tracking-tighter">Improvement Suggestion</p>
                       <p className="text-sm text-slate-200 mt-1">{pattern.suggestion}</p>
@@ -185,8 +188,9 @@ function Results() {
               </div>
             </div>
           </div>
-        ))}
-      </div>
+        )
+      })}
+    </div>
 
       {/* Audit Suggestions Footer */}
       <div className="mt-20 p-10 bg-primary-600/5 border border-primary-500/10 rounded-3xl text-center">
