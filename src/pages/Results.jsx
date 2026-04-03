@@ -11,52 +11,45 @@ import {
   Search
 } from 'lucide-react'
 
-// Mock Audit Data
-const MOCK_RESULTS = {
-  score: 64,
-  patterns: [
+
+
+function Results() {
+  const location = useLocation()
+  const navigate = useNavigate()
+  
+  // Use backend data if available, otherwise fallback to local mock/defaults
+  const auditData = location.state?.auditData
+  const scannedUrl = auditData?.url || location.state?.url || 'example.com'
+
+  const score = auditData?.score || 64
+  const patterns = auditData?.patterns || [
     {
       id: 1,
       type: 'Forced Sign-Up',
       severity: 'High',
       description: 'The website prevents access to pricing information until a user creates an account.',
       suggestion: 'Allow users to view essential information like pricing and features without prior registration.',
-      icon: Shield,
-      color: 'text-red-500',
-      bg: 'bg-red-500/10',
-      border: 'border-red-500/20'
-    },
-    {
-      id: 2,
-      type: 'Fake Urgency',
-      severity: 'Medium',
-      description: 'A countdown timer was detected that resets upon page reload, creating artificial pressure.',
-      suggestion: 'Remove artificial countdowns. Use real-time inventory data if urgency is necessary.',
-      icon: AlertTriangle,
-      color: 'text-orange-500',
-      bg: 'bg-orange-500/10',
-      border: 'border-orange-500/20'
-    },
-    {
-      id: 3,
-      type: 'Nagging Popups',
-      severity: 'Low',
-      description: 'Frequent newsletter popups appear every 30 seconds, disrupting the browsing experience.',
-      suggestion: 'Limit popups to once per session or use a subtle slide-in notification instead.',
-      icon: Info,
-      color: 'text-blue-500',
-      bg: 'bg-blue-500/10',
-      border: 'border-blue-500/20'
     }
   ]
-}
 
-function Results() {
-  const location = useLocation()
-  const navigate = useNavigate()
-  
-  // Safe fallback if state is missing (e.g., page refresh)
-  const scannedUrl = location.state?.url || 'example.com'
+  // Map icon strings (if from backend) to Components, or use default
+  const getIcon = (type) => {
+    switch(type) {
+      case 'Forced Sign-Up': return Shield
+      case 'Fake Urgency': return AlertTriangle
+      case 'Nagging Popups': return Info
+      default: return AlertCircle
+    }
+  }
+
+  const getStyles = (severity) => {
+    switch(severity) {
+      case 'High': return { color: 'text-red-500', bg: 'bg-red-500/10', border: 'border-red-500/20' }
+      case 'Medium': return { color: 'text-orange-500', bg: 'bg-orange-500/10', border: 'border-orange-500/20' }
+      case 'Low': return { color: 'text-blue-500', bg: 'bg-blue-500/10', border: 'border-blue-500/20' }
+      default: return { color: 'text-slate-400', bg: 'bg-slate-500/10', border: 'border-slate-800' }
+    }
+  }
 
   return (
     <main className="max-w-5xl mx-auto px-4 py-12 animate-in slide-in-from-bottom-4 duration-700">
@@ -97,7 +90,7 @@ function Results() {
             <h2 className="text-3xl font-bold mb-4">Audit Summary</h2>
             <p className="text-slate-400 max-w-md">
               We analyzed the provided URL for ethical UX violations. Our system detected 
-              <span className="text-white font-semibold"> {MOCK_RESULTS.patterns.length} dark patterns</span> with varying severity levels.
+              <span className="text-white font-semibold"> {patterns.length} dark patterns</span> with varying severity levels.
             </p>
           </div>
           <div className="mt-8 flex gap-4">
@@ -130,12 +123,12 @@ function Results() {
                 strokeWidth="8"
                 fill="transparent"
                 strokeDasharray={364.4}
-                strokeDashoffset={364.4 * (1 - MOCK_RESULTS.score / 100)}
+                strokeDashoffset={364.4 * (1 - score / 100)}
                 className="text-primary-500 transition-all duration-1000 ease-out"
                 strokeLinecap="round"
               />
             </svg>
-            <span className="absolute text-3xl font-black">{MOCK_RESULTS.score}</span>
+            <span className="absolute text-3xl font-black">{score}</span>
           </div>
           <h3 className="mt-6 font-bold text-xl uppercase tracking-wider text-slate-500">Ethical Score</h3>
           <p className="mt-2 text-sm text-green-500 font-medium">Moderate Standing</p>
@@ -149,22 +142,23 @@ function Results() {
           Detected Dark Patterns
         </h3>
 
-        {MOCK_RESULTS.patterns.map((pattern) => {
-          const Icon = pattern.icon
+        {patterns.map((pattern, index) => {
+          const Icon = getIcon(pattern.type)
+          const styles = getStyles(pattern.severity)
           return (
             <div 
-              key={pattern.id}
+              key={index}
               className={`p-1 rounded-3xl bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-800 hover:border-slate-700 transition-all shadow-xl group`}
             >
               <div className="p-6 md:p-8 flex flex-col md:flex-row gap-8 items-start">
-                <div className={`${pattern.bg} ${pattern.color} p-4 rounded-2xl`}>
+                <div className={`${styles.bg} ${styles.color} p-4 rounded-2xl`}>
                   <Icon className="w-8 h-8" />
                 </div>
                 
                 <div className="flex-1 space-y-4">
                   <div className="flex items-center justify-between">
                     <h4 className="text-2xl font-bold">{pattern.type}</h4>
-                    <span className={`text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full border ${pattern.border} ${pattern.color}`}>
+                    <span className={`text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full border ${styles.border} ${styles.color}`}>
                       {pattern.severity}
                     </span>
                   </div>

@@ -20,7 +20,7 @@ function Home() {
     return pattern.test(input) ? "" : "Please enter a valid URL (e.g., example.com)."
   }
 
-  const handleAudit = (e) => {
+  const handleAudit = async (e) => {
     e.preventDefault()
     const validationError = validateUrl(url)
     if (validationError) {
@@ -33,13 +33,31 @@ function Home() {
     
     // Mock sequential loading messages
     setLoadingMessage('Initializing audit engine...')
+    const msg1 = setTimeout(() => setLoadingMessage('Analyzing interface patterns...'), 700)
+    const msg2 = setTimeout(() => setLoadingMessage('Scanning for deceptive UX signals...'), 1400)
     
-    setTimeout(() => setLoadingMessage('Analyzing interface patterns...'), 700)
-    setTimeout(() => setLoadingMessage('Scanning for deceptive UX signals...'), 1400)
-    
-    setTimeout(() => {
-      navigate('/results', { state: { url } })
-    }, 2200)
+    try {
+      const response = await fetch('http://localhost:5000/api/scan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      })
+
+      if (!response.ok) throw new Error('Backend server is not responding correctly.')
+
+      const auditData = await response.json()
+      
+      // Ensure the user sees the loading messages for at least 2 seconds for the "feel"
+      setTimeout(() => {
+        navigate('/results', { state: { auditData } })
+      }, 2200)
+
+    } catch (err) {
+      clearTimeout(msg1)
+      clearTimeout(msg2)
+      setIsScanning(false)
+      setError(err.message || 'Failed to connect to the audit server. Ensure the backend is running.')
+    }
   }
 
   return (
