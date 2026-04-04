@@ -104,7 +104,7 @@ function App() {
         {/* Shared Footer */}
         <footer className="border-t border-slate-900 py-10 text-center">
           <p className="text-slate-600 text-sm">
-            Built with ❤️ by Team <span className="text-slate-400 font-semibold">Maverick</span> for Hacksagon 2026
+            Built by Team <span className="text-slate-400 font-semibold">Maverick</span> for Hacksagon 2026
           </p>
         </footer>
       </div>

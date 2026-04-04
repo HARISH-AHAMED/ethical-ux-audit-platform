@@ -187,45 +187,54 @@ function Results() {
               <span className="text-white font-semibold"> {patterns.length} dark patterns</span> with varying severity levels.
             </p>
           </div>
-          <div className="mt-8 flex gap-4">
-            <div className="bg-red-500/10 text-red-400 px-4 py-2 rounded-xl text-xs font-bold border border-red-500/20">
-              1 HIGH SEVERITY
+          <div className="mt-8 flex flex-wrap gap-4">
+            <div className={`px-4 py-2 rounded-xl text-xs font-bold border flex items-center gap-2 ${patterns.some(p => p.severity === 'High') ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-slate-800 text-slate-500 border-slate-700 opacity-50'}`}>
+              <AlertCircle className="w-4 h-4" />
+              {patterns.filter(p => p.severity === 'High').length} HIGH SEVERITY
             </div>
-            <div className="bg-orange-500/10 text-orange-400 px-4 py-2 rounded-xl text-xs font-bold border border-orange-500/20">
-              1 MEDIUM SEVERITY
+            <div className={`px-4 py-2 rounded-xl text-xs font-bold border flex items-center gap-2 ${patterns.some(p => p.severity === 'Medium') ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' : 'bg-slate-800 text-slate-500 border-slate-700 opacity-50'}`}>
+              <AlertTriangle className="w-4 h-4" />
+              {patterns.filter(p => p.severity === 'Medium').length} MEDIUM SEVERITY
             </div>
           </div>
         </div>
 
         <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 flex flex-col items-center justify-center text-center">
-          <div className="relative w-32 h-32 flex items-center justify-center">
-            <svg className="w-full h-full transform -rotate-90">
+          <div className="relative w-36 h-36 flex items-center justify-center">
+            <svg className="w-full h-full transform -rotate-90 scale-110" viewBox="0 0 144 144">
               <circle
-                cx="64"
-                cy="64"
-                r="58"
+                cx="72"
+                cy="72"
+                r="64"
                 stroke="currentColor"
-                strokeWidth="8"
+                strokeWidth="6"
                 fill="transparent"
-                className="text-slate-800"
+                className="text-slate-800/50"
               />
-              <circle
-                cx="64"
-                cy="64"
-                r="58"
+              <motion.circle
+                cx="72"
+                cy="72"
+                r="64"
                 stroke="currentColor"
                 strokeWidth="8"
                 fill="transparent"
-                strokeDasharray={364.4}
-                strokeDashoffset={364.4 * (1 - displayScore / 100)}
-                className="text-primary-500 transition-all duration-75 ease-out"
+                strokeDasharray={402.12}
+                initial={{ strokeDashoffset: 402.12 }}
+                animate={{ strokeDashoffset: 402.12 * (1 - displayScore / 100) }}
+                transition={{ duration: 1, ease: "easeOut" }}
+                className={`${displayScore >= 80 ? 'text-primary-500' : displayScore >= 60 ? 'text-orange-500' : 'text-red-500'}`}
                 strokeLinecap="round"
               />
             </svg>
-            <span className="absolute text-3xl font-black">{displayScore}</span>
+            <div className="absolute flex flex-col items-center">
+              <span className={`text-4xl font-black ${displayScore >= 80 ? 'text-primary-400' : displayScore >= 60 ? 'text-orange-400' : 'text-red-400'}`}>{displayScore}</span>
+              <span className="text-[10px] uppercase tracking-tighter text-slate-500 font-bold font-sans">SCORE</span>
+            </div>
           </div>
-          <h3 className="mt-6 font-bold text-xl uppercase tracking-wider text-slate-500">Ethical Score</h3>
-          <p className="mt-2 text-sm text-green-500 font-medium">Moderate Standing</p>
+          <h3 className="mt-8 font-bold text-sm uppercase tracking-widest text-slate-500">Ethical Rating</h3>
+          <p className={`mt-2 text-sm font-bold ${displayScore >= 80 ? 'text-primary-400' : displayScore >= 60 ? 'text-orange-400' : 'text-red-400'}`}>
+            {displayScore >= 80 ? 'Excellent' : displayScore >= 60 ? 'Moderate' : 'Poor Standing'}
+          </p>
         </div>
       </div>
 
@@ -289,20 +298,24 @@ function Results() {
         })}
         </motion.div>
 
-      {/* Audit Suggestions Footer */}
-      <div className="mt-20 p-10 bg-primary-600/5 border border-primary-500/10 rounded-3xl text-center">
-        <h3 className="text-2xl font-bold mb-4">Want a full audit report?</h3>
-        <p className="text-slate-400 mb-8 max-w-xl mx-auto">
-          During the hackathon demo, we can show you how our backend will eventually process 
-          multiple pages and generate a PDF report for business owners.
-        </p>
-        <button 
-          onClick={handleDownload}
-          className="bg-primary-600 hover:bg-primary-500 text-white px-10 py-4 rounded-2xl font-bold transition-all shadow-xl shadow-primary-500/20 active:scale-95 flex items-center justify-center gap-2 mx-auto"
-        >
-          <Download className="w-5 h-5" />
-          Download Audit Report (.pdf)
-        </button>
+      <div className="mt-20 p-12 rounded-[2rem] relative overflow-hidden border border-slate-800 bg-slate-900/40 backdrop-blur-xl">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary-500/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
+        <div className="relative z-10 text-center space-y-6">
+          <div className="inline-flex p-4 rounded-2xl bg-primary-500/10 mb-2">
+            <Download className="w-8 h-8 text-primary-500" />
+          </div>
+          <h2 className="text-3xl font-black italic tracking-tight">EXPORT FULL AUDIT REPORT</h2>
+          <p className="text-slate-400 max-w-xl mx-auto text-lg leading-relaxed">
+            Need this for a formal review? Download our comprehensive PDF report including all violations, severity scores, and ethical recommendations.
+          </p>
+          <button 
+            onClick={handleDownload}
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-primary-600 to-primary-400 hover:from-primary-500 hover:to-primary-300 text-white px-10 py-4 rounded-2xl font-black transition-all hover:scale-105 active:scale-95 shadow-xl shadow-primary-500/25 uppercase tracking-widest text-sm"
+          >
+            <Download className="w-5 h-5" />
+            Download Detailed PDF Report
+          </button>
+        </div>
       </div>
     </motion.main>
   )

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, Info, ShieldCheck, AlertTriangle } from 'lucide-react'
+import { Search, Info, ShieldCheck, AlertTriangle, Lock, DollarSign, Clock } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 
@@ -85,13 +85,9 @@ function Home() {
       )}
 
       <div className="text-center space-y-8">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-400 text-sm font-medium mb-4">
-          <Info className="w-4 h-4" />
-          <span>Hacksagon 2026 Live Audit Tool</span>
-        </div>
         
         <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-tight">
-          Expose <span className="text-primary-500">Unethical</span> UX<br />
+          Expose <span className="animate-shimmer px-1">Unethical</span> UX<br />
           in Seconds.
         </h1>
         
@@ -135,15 +131,15 @@ function Home() {
             </div>
           )}
           
-          <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm text-slate-500 font-medium">
-            <span className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-primary-500" /> Free for Students
+          <div className="mt-8 flex flex-wrap justify-center gap-x-8 gap-y-4 text-xs font-semibold uppercase tracking-widest text-slate-500">
+            <span className="flex items-center gap-2 border-r border-slate-800 pr-8 last:border-0 last:pr-0">
+              <ShieldCheck className="w-4 h-4 text-primary-500/50" /> 7 Pattern Types 
+            </span>
+            <span className="flex items-center gap-2 border-r border-slate-800 pr-8 last:border-0 last:pr-0">
+              <AlertTriangle className="w-4 h-4 text-orange-500/50" /> Instant Results
             </span>
             <span className="flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-orange-500" /> Instant Detection
-            </span>
-            <span className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-primary-500" /> Open Source
+              <ShieldCheck className="w-4 h-4 text-primary-500/50" /> PDF Reports
             </span>
           </div>
         </form>
@@ -160,9 +156,9 @@ function Home() {
         className="mt-32 grid md:grid-cols-3 gap-8"
       >
         {[
-          { title: 'Forced Sign-ups', desc: 'Identifies traps that prevent user access without data.' },
-          { title: 'Hidden Costs', desc: 'Detects unexpected charges added at the final step.' },
-          { title: 'Fake Urgency', desc: 'Exposes manipulative countdowns and pressure tactics.' },
+          { title: 'Forced Sign-ups', icon: <Lock className="w-6 h-6 text-red-400" />, color: 'border-red-500/30', bg: 'hover:bg-red-500/5', desc: 'Identifies traps that prevent user access without data.' },
+          { title: 'Hidden Costs', icon: <DollarSign className="w-6 h-6 text-orange-400" />, color: 'border-orange-500/30', bg: 'hover:bg-orange-500/5', desc: 'Detects unexpected charges added at the final step.' },
+          { title: 'Fake Urgency', icon: <Clock className="w-6 h-6 text-amber-400" />, color: 'border-amber-500/30', bg: 'hover:bg-amber-500/5', desc: 'Exposes manipulative countdowns and pressure tactics.' },
         ].map((feature, i) => (
           <motion.div 
             key={i} 
@@ -170,10 +166,16 @@ function Home() {
               hidden: { opacity: 0, y: 20 },
               show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
             }}
-            className="p-8 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-primary-500/50 transition-all group cursor-default"
+            whileHover={{ y: -5 }}
+            className={`p-8 rounded-2xl bg-slate-900/40 backdrop-blur-sm border-l-4 ${feature.color} border-t border-r border-b border-slate-800 ${feature.bg} transition-all group cursor-default`}
           >
-            <h3 className="text-xl font-bold mb-3 group-hover:text-primary-400">{feature.title}</h3>
-            <p className="text-slate-400 group-hover:text-slate-300 transition-colors">{feature.desc}</p>
+            <h3 className="text-xl font-bold mb-3 group-hover:text-primary-400 flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-slate-800/50 group-hover:bg-slate-800 transition-colors">
+                {feature.icon}
+              </div>
+              {feature.title}
+            </h3>
+            <p className="text-slate-400 group-hover:text-slate-300 transition-colors leading-relaxed">{feature.desc}</p>
           </motion.div>
         ))}
       </motion.div>

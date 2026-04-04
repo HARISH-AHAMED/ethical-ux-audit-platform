@@ -75,13 +75,35 @@ const HistoryPage = () => {
           </div>
           <input
             type="text"
-            className="block w-full pl-11 pr-4 py-3 border border-slate-800 rounded-xl leading-5 bg-slate-900 text-slate-300 placeholder-slate-500 focus:outline-none focus:bg-slate-800 focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-colors shadow-inner"
+            className="block w-full pl-11 pr-4 py-3 border-2 border-slate-800 rounded-2xl leading-5 bg-slate-900/50 backdrop-blur-md text-slate-300 placeholder-slate-500 focus:outline-none focus:bg-slate-900 focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500/50 transition-all shadow-inner"
             placeholder="Search audits by URL..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
       </div>
+
+      {/* Stats Summary */}
+      {!loading && audits.length > 0 && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+          {[
+            { label: 'Total Audits', value: audits.length, icon: ShieldCheck, color: 'text-primary-400' },
+            { label: 'Comparisons', value: audits.filter(a => a.type === 'comparison').length, icon: Scale, color: 'text-indigo-400' },
+            { label: 'Avg Ethical Score', value: Math.round(audits.reduce((acc, a) => acc + (a.type === 'comparison' ? (a.comparison.siteA.score + a.comparison.siteB.score)/2 : (a.score || 0)), 0) / (audits.length || 1)), icon: AlertTriangle, suffix: '/100', color: 'text-emerald-400' },
+            { label: 'Active Patterns', value: audits.reduce((acc, a) => acc + (a.type === 'comparison' ? (a.comparison.siteA.patternsCount + a.comparison.siteB.patternsCount) : (a.patterns?.length || 0)), 0), icon: HistoryIcon, color: 'text-orange-400' },
+          ].map((stat, i) => (
+            <div key={i} className="bg-slate-900/40 backdrop-blur-md border border-slate-800 p-5 rounded-2xl">
+              <div className="flex items-center gap-3 mb-2">
+                <stat.icon className={`w-4 h-4 ${stat.color}`} />
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-widest">{stat.label}</span>
+              </div>
+              <div className="text-2xl font-black text-white">
+                {stat.value}{stat.suffix || ''}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {error ? (
         <div className="bg-red-500/10 border border-red-500/20 p-8 rounded-2xl text-center text-red-500">

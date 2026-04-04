@@ -288,8 +288,11 @@ function Compare() {
           <Scale className="w-8 h-8 text-primary-500" />
         </div>
         <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">Competitor Analysis</h1>
-        <p className="text-slate-400">
+        <p className="text-slate-400 text-lg">
           Compare two websites side-by-side to discover which one provides a more ethical and transparent user experience.
+        </p>
+        <p className="text-primary-500/60 text-sm mt-4 font-medium uppercase tracking-widest italic">
+          Which platform treats its users better?
         </p>
       </div>
 
@@ -297,9 +300,13 @@ function Compare() {
       {!results && (
         <form onSubmit={handleCompare} className="max-w-4xl mx-auto">
           <div className="grid md:grid-cols-2 gap-6 mb-8 relative">
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-slate-800 rounded-full flex items-center justify-center text-xs font-bold text-slate-400 z-10 border-4 border-slate-950 hidden md:flex">
+            <motion.div 
+              animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-primary-600/20 rounded-full flex items-center justify-center text-xs font-black text-primary-400 z-10 border-2 border-primary-500/40 hidden md:flex backdrop-blur-md shadow-[0_0_15px_rgba(16,185,129,0.3)]"
+            >
               VS
-            </div>
+            </motion.div>
             
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 relative group overflow-hidden">
               <div className="absolute top-0 left-0 w-1 h-full bg-slate-700 group-focus-within:bg-primary-500 transition-colors"></div>
@@ -342,9 +349,10 @@ function Compare() {
             <button 
               type="submit"
               disabled={isScanning}
-              className="bg-primary-600 hover:bg-primary-500 text-white px-10 py-4 rounded-2xl font-bold transition-all shadow-xl shadow-primary-500/20 active:scale-95 disabled:opacity-50"
+              className="bg-gradient-to-r from-primary-600 to-primary-400 hover:from-primary-500 hover:to-primary-300 text-white px-12 py-5 rounded-2xl font-black transition-all shadow-xl shadow-primary-500/20 active:scale-95 disabled:opacity-50 uppercase tracking-widest text-sm flex items-center justify-center gap-3 mx-auto"
             >
-              Analyze Both Websites
+              <Scale className="w-5 h-5" />
+              Analyze Both Platforms
             </button>
           </div>
         </form>
