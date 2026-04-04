@@ -134,12 +134,12 @@ function Compare() {
       // Execute both scans in parallel using the existing API endpoint
       // We pass saveToHistory: false so we don't clutter the backend with single-site logs
       const [resA, resB] = await Promise.all([
-        fetch('http://localhost:5000/api/scan', {
+        fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/scan`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ url: urlA, saveToHistory: false })
         }),
-        fetch('http://localhost:5000/api/scan', {
+        fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/scan`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ url: urlB, saveToHistory: false })
@@ -159,7 +159,7 @@ function Compare() {
         setIsScanning(false)
         
         try {
-          await fetch('http://localhost:5000/api/history/compare', {
+          await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/history/compare`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

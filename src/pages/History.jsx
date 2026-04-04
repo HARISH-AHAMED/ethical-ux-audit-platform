@@ -34,7 +34,7 @@ const HistoryPage = () => {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/history')
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/history`)
         if (!response.ok) throw new Error('Failed to fetch history')
         const data = await response.json()
         setAudits(data)
