@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom'
 import Home from './pages/Home'
 import Results from './pages/Results'
@@ -12,6 +12,12 @@ function App() {
   const location = useLocation()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const closeMenu = () => setIsMobileMenuOpen(false)
+  const { pathname } = useLocation()
+
+  // Scroll to top on every route change
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
 
   return (
     <div className="min-h-screen text-slate-100 relative selection:bg-primary-500/30" style={{ backgroundColor: '#020617' }}>

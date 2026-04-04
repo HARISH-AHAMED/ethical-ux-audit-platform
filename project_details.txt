@@ -1,0 +1,61 @@
+# Maverick: Ethical UX Audit Platform - Technical Document
+
+## 1. Project Overview
+Maverick is a high-performance Ethical UX Audit Platform designed to identify "Dark Patterns" and manipulative user interface practices on any given website. It provides a data-driven "Ethical Score" to help users and designers promote transparency.
+
+## 2. Core Features
+- **Real-Time Audit Engine**: Analyzes URLs instantly for predatory linguistic and structural patterns.
+- **Competitor Comparison**: Side-by-side analysis of two platforms (e.g., Website A vs Website B) to find the more ethical choice.
+- **Audit Mission Control (History)**: Tracking dashboard with global statistics (Total Audits, Average Ethical Score, Active Pattern counts).
+- **Automated PDF Reporting**: Generates a professional audit report for offline review.
+- **Industry Baselining**: Intelligent categorization (E-commerce, Travel, SaaS, etc.) to set risk expectations.
+- **Responsive Cinematic Design**: Fully optimized for cross-device usage with premium dark-mode aesthetics.
+
+## 3. Technology Stack & Packages
+### Frontend (React + Vite)
+- **react / react-dom**: Core UI library.
+- **react-router-dom**: Modern client-side routing.
+- **framer-motion**: Cinematic transitions and 3D pulsing animations.
+- **lucide-react**: High-quality visual iconography.
+- **tailwindcss**: Utility-first CSS framework for premium styling.
+- **jspdf / jspdf-autotable**: Logic for generating high-fidelity PDF reports.
+
+### Backend (Node.js + Express)
+- **express**: Core server framework.
+- **mongoose**: MongoDB object modeling (Connects to MongoDB Atlas).
+- **axios**: Robust HTML content fetching with custom User-Agent injection.
+- **dotenv**: Secure environment variable management.
+- **cors**: Cross-Origin Resource Sharing handling.
+
+## 4. Proprietary Logic: The Deterministic Heuristic Engine
+The server-side analysis engine operates on several key algorithmic principles:
+
+### A. Pattern Matching (Regex)
+Scans the fetched HTML code for over 100+ "dark pattern" triggers, including:
+- **Forced Action**: Detects prompts like "sign up to continue."
+- **Fake Urgency**: Detects countdown keywords and urgency markers.
+- **Scarcity Pressure**: Identifies low-stock prompts.
+- **Hidden Fees**: Scans for "drip pricing" keywords (additional fees, taxes at checkout).
+- **Confirmshaming**: Detects manipulative CTA labels.
+
+### B. Structural Probe
+Analyzes DOM selectors (IDs and Classes) for suspicious common design signatures like `id="modal-gate"` or `class="interstitial-overlay"`.
+
+### C. Industry Interpolation
+If a site is categorized as specific high-risk domains (Travel/E-commerce), the engine applies an industry-wide "Ethical Risk Baseline" to account for statistically likely but deeply embedded patterns.
+
+### D. Scoring Algorithm
+Formula: `Final Score = (Base Industry Score - Total Pattern Penalties) + Random Jitter (0-3)`
+- Penalties range from 3 to 20 based on severity (High/Medium/Low).
+- A Frequency Multiplier is applied if the same pattern appears multiple times.
+
+## 5. UI/UX Design System
+- **Typography**: "Outfit" (Google Font) - Modern, clean, and professional.
+- **Shimmering Text**: Custom CSS animation used to highlight key "ethical" or "unethical" focal points.
+- **Glassmorphic Layering**: Deep z-index strategy (Layer 0: Circuit Background, Layer 10: Glass Content) to create a futuristic audit-room feel.
+- **Global Scroll Correction**: Standardized behavior to always reset viewport to (0,0) on navigation.
+
+## 6. Project Feasibility & Scalability
+- **Feasibility**: High. Relies on standard HTTP protocols and efficient HTML parsing.
+- **Scalability**: Can be easily migrated to serverless (AWS Lambda/Vercel Functions) to handle massive parallel audits.
+- **Security**: Implements secure environment variable storage and sanitized URL inputs.
