@@ -4,6 +4,7 @@ import Home from './pages/Home'
 import Results from './pages/Results'
 import HistoryPage from './pages/History'
 import Compare from './pages/Compare'
+import HowItWorks from './pages/HowItWorks'
 import { ShieldCheck, History, Scale, Menu, X } from 'lucide-react'
 
 function App() {
@@ -44,7 +45,7 @@ function App() {
               <Link to="/history" className={`transition-colors flex items-center gap-1 ${location.pathname.startsWith('/history') ? 'text-primary-400 font-bold' : 'text-slate-300 hover:text-primary-400'}`}>
                 <History className="w-4 h-4" /> History
               </Link>
-              <a href="#" className="text-slate-300 hover:text-primary-400 transition-colors">How it works</a>
+              <Link to="/how-it-works" className={`transition-colors ${location.pathname === '/how-it-works' ? 'text-primary-400 font-bold' : 'text-slate-300 hover:text-primary-400'}`}>How it works</Link>
             </div>
 
             <Link to="/" className="hidden md:block bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-lg shadow-primary-500/20">
@@ -64,7 +65,7 @@ function App() {
               <Link to="/history" className={`flex items-center gap-2 transition-colors ${location.pathname.startsWith('/history') ? 'text-primary-400 font-bold' : 'text-slate-300 hover:text-primary-400'}`} onClick={closeMenu}>
                 <History className="w-5 h-5" /> Past Audits
               </Link>
-              <a href="#" className="block text-slate-300 hover:text-primary-400 transition-colors" onClick={closeMenu}>How it works</a>
+              <Link to="/how-it-works" className={`block transition-colors ${location.pathname === '/how-it-works' ? 'text-primary-400 font-bold' : 'text-slate-300 hover:text-primary-400'}`} onClick={closeMenu}>How it works</Link>
               
               <div className="pt-4 border-t border-slate-800">
                 <Link to="/" className="flex items-center justify-center w-full bg-primary-600 hover:bg-primary-700 text-white px-4 py-3 rounded-xl text-sm font-bold transition-all shadow-lg" onClick={closeMenu}>
@@ -82,6 +83,7 @@ function App() {
         <Route path="/results" element={<Results />} />
         <Route path="/history" element={<HistoryPage />} />
         <Route path="/compare" element={<Compare />} />
+        <Route path="/how-it-works" element={<HowItWorks />} />
       </Routes>
 
       {/* Shared Footer */}
