@@ -198,7 +198,7 @@ app.get('/', (req, res) => {
 // GET /api/history - Fetch past audits
 app.get('/api/history', async (req, res) => {
   try {
-    const history = await Audit.find().sort({ createdAt: -1 });
+    const history = await Audit.find().sort({ createdAt: -1 }).limit(50).lean();
     res.json(history);
   } catch (error) {
     console.error('❌ History Fetch Error:', error);

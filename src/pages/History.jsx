@@ -13,8 +13,11 @@ import {
 import { motion } from 'framer-motion'
 
 const HistoryPage = () => {
-  const [audits, setAudits] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [audits, setAudits] = useState(() => {
+    const cached = localStorage.getItem('maverick_history')
+    return cached ? JSON.parse(cached) : []
+  })
+  const [loading, setLoading] = useState(!audits.length)
   const [error, setError] = useState(null)
 
   useEffect(() => {
@@ -24,6 +27,7 @@ const HistoryPage = () => {
         if (!response.ok) throw new Error('Failed to fetch history')
         const data = await response.json()
         setAudits(data)
+        localStorage.setItem('maverick_history', JSON.stringify(data))
       } catch (err) {
         setError(err.message)
       } finally {
@@ -33,14 +37,7 @@ const HistoryPage = () => {
     fetchHistory()
   }, [])
 
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500"></div>
-        <p className="mt-4 text-slate-400">Fetching audit records...</p>
-      </div>
-    )
-  }
+
 
   return (
     <motion.div 
@@ -66,6 +63,27 @@ const HistoryPage = () => {
         <div className="bg-red-500/10 border border-red-500/20 p-8 rounded-2xl text-center text-red-500">
           <AlertTriangle className="w-12 h-12 mx-auto mb-4" />
           <p>Error: {error}</p>
+        </div>
+      ) : loading && !audits.length ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="bg-slate-900 border border-slate-800 p-6 rounded-3xl animate-pulse">
+              <div className="flex justify-between items-start mb-6">
+                <div>
+                  <div className="h-6 bg-slate-800 rounded-lg w-48 mb-3"></div>
+                  <div className="h-4 bg-slate-800/50 rounded flex gap-2 w-32"></div>
+                </div>
+                <div className="h-8 bg-slate-800 rounded-full w-24"></div>
+              </div>
+              <div className="flex justify-between items-end border-t border-slate-800 pt-6">
+                <div>
+                  <div className="h-4 bg-slate-800/50 rounded w-20 mb-2"></div>
+                  <div className="h-8 bg-slate-800 rounded w-16"></div>
+                </div>
+                <div className="h-10 bg-slate-800 rounded-xl w-32"></div>
+              </div>
+            </div>
+          ))}
         </div>
       ) : audits.length === 0 ? (
         <div className="bg-slate-900 border border-slate-800 p-16 rounded-[2.5rem] text-center">
