@@ -19,6 +19,17 @@ const HistoryPage = () => {
   })
   const [loading, setLoading] = useState(!audits.length)
   const [error, setError] = useState(null)
+  const [searchQuery, setSearchQuery] = useState('')
+
+  const filteredAudits = audits.filter(audit => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    if (audit.type === 'comparison') {
+      return audit.comparison.siteA.url.toLowerCase().includes(query) ||
+             audit.comparison.siteB.url.toLowerCase().includes(query);
+    }
+    return audit.url && audit.url.toLowerCase().includes(query);
+  });
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -57,6 +68,19 @@ const HistoryPage = () => {
           </h1>
           <p className="text-slate-400 mt-2">Browse and review your previous ethical UX assessments.</p>
         </div>
+        
+        <div className="mt-6 md:mt-0 relative w-full md:w-80">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <Search className="h-5 w-5 text-slate-500" />
+          </div>
+          <input
+            type="text"
+            className="block w-full pl-11 pr-4 py-3 border border-slate-800 rounded-xl leading-5 bg-slate-900 text-slate-300 placeholder-slate-500 focus:outline-none focus:bg-slate-800 focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-colors shadow-inner"
+            placeholder="Search audits by URL..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
       </div>
 
       {error ? (
@@ -92,6 +116,13 @@ const HistoryPage = () => {
           <p className="text-slate-500 mt-2 mb-8">Scan a website on the home page to start building your history.</p>
           <Link to="/" className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-3 rounded-2xl font-semibold transition-all">Start Scanning</Link>
         </div>
+      ) : filteredAudits.length === 0 ? (
+        <div className="bg-slate-900 border border-slate-800 p-16 rounded-[2.5rem] text-center">
+          <Search className="w-16 h-16 text-slate-700 mx-auto mb-6" />
+          <h2 className="text-2xl font-bold text-white">No matches found for "{searchQuery}"</h2>
+          <p className="text-slate-500 mt-2 mb-8">Try adjusting your search terms or scan a new website.</p>
+          <button onClick={() => setSearchQuery('')} className="bg-slate-800 hover:bg-slate-700 text-white px-8 py-3 rounded-2xl font-semibold transition-all">Clear Search</button>
+        </div>
       ) : (
         <motion.div 
           initial="hidden"
@@ -102,7 +133,7 @@ const HistoryPage = () => {
           }}
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
-          {audits.map((audit) => {
+          {filteredAudits.map((audit) => {
             if (audit.type === 'comparison') {
               const comp = audit.comparison;
               return (

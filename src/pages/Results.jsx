@@ -147,11 +147,16 @@ function Results() {
             <span className="hidden sm:inline">Back</span>
           </button>
           
-          <div className="flex items-center gap-3 bg-slate-900 px-4 py-2 rounded-xl border border-slate-800 shadow-xl">
+          <a 
+            href={scannedUrl.startsWith('http') ? scannedUrl : `https://${scannedUrl}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 bg-slate-900 px-4 py-2 rounded-xl border border-slate-800 shadow-xl hover:border-primary-500/30 transition-colors group cursor-pointer"
+          >
             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-            <span className="text-sm font-medium text-slate-300 truncate max-w-[150px] sm:max-w-xs">{scannedUrl}</span>
-            <ExternalLink className="w-4 h-4 text-slate-500" />
-          </div>
+            <span className="text-sm font-medium text-slate-300 truncate max-w-[150px] sm:max-w-xs group-hover:text-primary-400 transition-colors">{scannedUrl}</span>
+            <ExternalLink className="w-4 h-4 text-slate-500 group-hover:text-primary-400 transition-colors" />
+          </a>
         </div>
 
         <button 
