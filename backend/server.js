@@ -195,6 +195,17 @@ app.get('/', (req, res) => {
   res.send('Ethical UX Audit API Running');
 });
 
+// GET /api/history - Fetch past audits
+app.get('/api/history', async (req, res) => {
+  try {
+    const history = await Audit.find().sort({ createdAt: -1 });
+    res.json(history);
+  } catch (error) {
+    console.error('❌ History Fetch Error:', error);
+    res.status(500).json({ error: 'Failed to fetch audit history' });
+  }
+});
+
 // POST /api/scan - Advanced Heuristic Scan
 app.post('/api/scan', async (req, res) => {
   let { url } = req.body;
