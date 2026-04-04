@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Routes, Route, Link, useNavigate } from 'react-router-dom'
+import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom'
 import Home from './pages/Home'
 import Results from './pages/Results'
 import HistoryPage from './pages/History'
@@ -8,6 +8,7 @@ import { ShieldCheck, History, Scale, Menu, X } from 'lucide-react'
 
 function App() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const closeMenu = () => setIsMobileMenuOpen(false)
 
@@ -35,15 +36,15 @@ function App() {
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
             
-            <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
-              <Link to="/" className="hover:text-primary-400 transition-colors">Dashboard</Link>
-              <Link to="/compare" className="hover:text-primary-400 transition-colors flex items-center gap-1">
+            <div className="hidden md:flex items-center gap-8 text-sm font-medium">
+              <Link to="/" className={`transition-colors ${location.pathname === '/' ? 'text-primary-400 font-bold' : 'text-slate-300 hover:text-primary-400'}`}>Dashboard</Link>
+              <Link to="/compare" className={`transition-colors flex items-center gap-1 ${location.pathname === '/compare' ? 'text-primary-400 font-bold' : 'text-slate-300 hover:text-primary-400'}`}>
                 <Scale className="w-4 h-4" /> Compare
               </Link>
-              <Link to="/history" className="hover:text-primary-400 transition-colors flex items-center gap-1">
+              <Link to="/history" className={`transition-colors flex items-center gap-1 ${location.pathname.startsWith('/history') ? 'text-primary-400 font-bold' : 'text-slate-300 hover:text-primary-400'}`}>
                 <History className="w-4 h-4" /> History
               </Link>
-              <a href="#" className="hover:text-primary-400 transition-colors">How it works</a>
+              <a href="#" className="text-slate-300 hover:text-primary-400 transition-colors">How it works</a>
             </div>
 
             <Link to="/" className="hidden md:block bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-lg shadow-primary-500/20">
@@ -55,15 +56,15 @@ function App() {
         {/* Mobile Dropdown */}
         {isMobileMenuOpen && (
           <div className="md:hidden bg-slate-900 border-b border-slate-800 absolute w-full left-0 top-16 shadow-2xl">
-            <div className="flex flex-col px-6 py-6 space-y-5 text-slate-300 font-medium">
-              <Link to="/" className="block hover:text-primary-400" onClick={closeMenu}>Dashboard</Link>
-              <Link to="/compare" className="flex items-center gap-2 hover:text-primary-400" onClick={closeMenu}>
+            <div className="flex flex-col px-6 py-6 space-y-5 font-medium">
+              <Link to="/" className={`block transition-colors ${location.pathname === '/' ? 'text-primary-400 font-bold' : 'text-slate-300 hover:text-primary-400'}`} onClick={closeMenu}>Dashboard</Link>
+              <Link to="/compare" className={`flex items-center gap-2 transition-colors ${location.pathname === '/compare' ? 'text-primary-400 font-bold' : 'text-slate-300 hover:text-primary-400'}`} onClick={closeMenu}>
                 <Scale className="w-5 h-5" /> Compare Websites
               </Link>
-              <Link to="/history" className="flex items-center gap-2 hover:text-primary-400" onClick={closeMenu}>
+              <Link to="/history" className={`flex items-center gap-2 transition-colors ${location.pathname.startsWith('/history') ? 'text-primary-400 font-bold' : 'text-slate-300 hover:text-primary-400'}`} onClick={closeMenu}>
                 <History className="w-5 h-5" /> Past Audits
               </Link>
-              <a href="#" className="block hover:text-primary-400" onClick={closeMenu}>How it works</a>
+              <a href="#" className="block text-slate-300 hover:text-primary-400 transition-colors" onClick={closeMenu}>How it works</a>
               
               <div className="pt-4 border-t border-slate-800">
                 <Link to="/" className="flex items-center justify-center w-full bg-primary-600 hover:bg-primary-700 text-white px-4 py-3 rounded-xl text-sm font-bold transition-all shadow-lg" onClick={closeMenu}>
