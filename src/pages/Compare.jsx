@@ -1,0 +1,278 @@
+import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
+import { 
+  ArrowLeft,
+  Scale, 
+  Search, 
+  ShieldCheck, 
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+  Trophy
+} from 'lucide-react'
+
+function Compare() {
+  const [urlA, setUrlA] = useState('')
+  const [urlB, setUrlB] = useState('')
+  const [isScanning, setIsScanning] = useState(false)
+  const [error, setError] = useState('')
+  const [results, setResults] = useState(null)
+
+  const validateUrl = (input) => {
+    if (!input) return "URL cannot be empty."
+    const pattern = new RegExp('^(https?:\\/\\/)?'+ 
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ 
+      '((\\d{1,3}\\.){3}\\d{1,3}))'+ 
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ 
+      '(\\?[;&a-z\\d%_.~+=-]*)?'+ 
+      '(\\#[-a-z\\d_]*)?$','i')
+    return pattern.test(input)
+  }
+
+  const handleCompare = async (e) => {
+    e.preventDefault()
+    
+    if (!validateUrl(urlA) || !validateUrl(urlB)) {
+      setError("Please enter valid URLs for both Website A and Website B.")
+      return
+    }
+    
+    if (urlA === urlB) {
+      setError("Please enter two different websites to compare.")
+      return
+    }
+
+    setError('')
+    setIsScanning(true)
+    setResults(null)
+
+    try {
+      // Execute both scans in parallel using the existing API endpoint
+      const [resA, resB] = await Promise.all([
+        fetch('http://localhost:5000/api/scan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: urlA })
+        }),
+        fetch('http://localhost:5000/api/scan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: urlB })
+        })
+      ])
+
+      if (!resA.ok || !resB.ok) {
+        throw new Error("One or both scans failed. Ensure the URLs are accessible and the backend is running.")
+      }
+
+      const dataA = await resA.json()
+      const dataB = await resB.json()
+
+      // Small delay for the "processing" feel
+      setTimeout(() => {
+        setResults({ siteA: dataA, siteB: dataB })
+        setIsScanning(false)
+      }, 1500)
+
+    } catch (err) {
+      setIsScanning(false)
+      setError(err.message || 'Failed to complete comparison scan.')
+    }
+  }
+
+  const renderResultCard = (data, title, isWinner) => (
+    <motion.div 
+      variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
+      className={`relative p-8 rounded-3xl border transition-all ${
+        isWinner 
+          ? 'bg-emerald-950/10 border-emerald-500/30 shadow-[0_0_40px_-15px_rgba(16,185,129,0.2)]' 
+          : 'bg-slate-900 border-slate-800'
+      }`}
+    >
+      {isWinner && (
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-4 py-1 rounded-full text-xs font-bold flex items-center gap-2 shadow-xl backdrop-blur-md">
+          <Trophy className="w-3 h-3" /> Most Ethical
+        </div>
+      )}
+
+      <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
+      <p className="text-slate-400 text-sm mb-8 truncate" title={data.url}>{data.url}</p>
+
+      <div className="flex items-center gap-6 mb-8">
+        <div className="relative w-24 h-24 flex items-center justify-center">
+          <svg className="w-full h-full transform -rotate-90">
+            <circle cx="48" cy="48" r="44" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-slate-800" />
+            <circle 
+              cx="48" cy="48" r="44" stroke="currentColor" strokeWidth="8" fill="transparent" 
+              strokeDasharray={276.4} strokeDashoffset={276.4 * (1 - data.score / 100)} 
+              className={`${isWinner ? 'text-emerald-500' : 'text-primary-500'} transition-all duration-1000 ease-out`} strokeLinecap="round" 
+            />
+          </svg>
+          <span className="absolute text-2xl font-black">{data.score}</span>
+        </div>
+        <div>
+          <p className="text-3xl font-black">{data.patterns.length}</p>
+          <p className="text-slate-500 text-sm font-medium uppercase tracking-wider">Dark Patterns</p>
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        {data.patterns.slice(0, 3).map((p, i) => (
+          <div key={i} className="bg-slate-950/50 rounded-xl p-3 border border-slate-800/50 flex items-start gap-3">
+            {p.severity === 'High' ? (
+              <XCircle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
+            ) : (
+              <AlertTriangle className="w-4 h-4 text-orange-500 flex-shrink-0 mt-0.5" />
+            )}
+            <div>
+              <p className="text-sm font-bold text-slate-200">{p.type}</p>
+              <p className="text-xs text-slate-500 mt-1 line-clamp-2">{p.description}</p>
+            </div>
+          </div>
+        ))}
+        {data.patterns.length === 0 && (
+          <div className="bg-emerald-500/10 text-emerald-400 rounded-xl p-4 border border-emerald-500/20 flex items-center gap-2">
+            <CheckCircle className="w-5 h-5" />
+            <span className="text-sm font-bold">No dark patterns detected!</span>
+          </div>
+        )}
+      </div>
+    </motion.div>
+  )
+
+  return (
+    <motion.main 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative"
+    >
+      {/* Loading Overlay */}
+      {isScanning && (
+        <div className="fixed inset-0 z-[60] bg-slate-950/80 backdrop-blur-md flex flex-col items-center justify-center space-y-6">
+          <div className="relative w-24 h-24">
+            <Scale className="absolute inset-0 m-auto w-8 h-8 text-primary-500 animate-pulse" />
+            <div className="absolute inset-0 border-4 border-primary-500/20 rounded-full"></div>
+            <div className="absolute inset-0 border-4 border-t-primary-500 rounded-full animate-spin"></div>
+          </div>
+          <div className="text-center space-y-2">
+            <h3 className="text-2xl font-bold text-white animate-pulse">Running Parallel Audits...</h3>
+            <p className="text-slate-400 text-sm">Evaluating both platforms simultaneously.</p>
+          </div>
+        </div>
+      )}
+
+      {/* Header */}
+      <div className="text-center max-w-2xl mx-auto mb-16">
+        <div className="inline-flex items-center justify-center p-3 bg-primary-500/10 rounded-2xl mb-6 border border-primary-500/20">
+          <Scale className="w-8 h-8 text-primary-500" />
+        </div>
+        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">Competitor Analysis</h1>
+        <p className="text-slate-400">
+          Compare two websites side-by-side to discover which one provides a more ethical and transparent user experience.
+        </p>
+      </div>
+
+      {/* Comparison Form */}
+      {!results && (
+        <form onSubmit={handleCompare} className="max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-6 mb-8 relative">
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-slate-800 rounded-full flex items-center justify-center text-xs font-bold text-slate-400 z-10 border-4 border-slate-950 hidden md:flex">
+              VS
+            </div>
+            
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 relative group overflow-hidden">
+              <div className="absolute top-0 left-0 w-1 h-full bg-slate-700 group-focus-within:bg-primary-500 transition-colors"></div>
+              <label className="block text-sm font-bold text-slate-300 mb-2">Website A</label>
+              <div className="flex items-center gap-3 bg-slate-950 border border-slate-800 rounded-xl p-3">
+                <Search className="w-5 h-5 text-slate-600" />
+                <input
+                  type="text"
+                  placeholder="e.g., booking.com"
+                  className="w-full bg-transparent border-none focus:ring-0 text-slate-100 placeholder:text-slate-600"
+                  value={urlA}
+                  onChange={(e) => { setUrlA(e.target.value); setError('') }}
+                />
+              </div>
+            </div>
+
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 relative group overflow-hidden">
+              <div className="absolute top-0 right-0 w-1 h-full bg-slate-700 group-focus-within:bg-primary-500 transition-colors"></div>
+              <label className="block text-sm font-bold text-slate-300 mb-2">Website B</label>
+              <div className="flex items-center gap-3 bg-slate-950 border border-slate-800 rounded-xl p-3">
+                <Search className="w-5 h-5 text-slate-600" />
+                <input
+                  type="text"
+                  placeholder="e.g., agoda.com"
+                  className="w-full bg-transparent border-none focus:ring-0 text-slate-100 placeholder:text-slate-600"
+                  value={urlB}
+                  onChange={(e) => { setUrlB(e.target.value); setError('') }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {error && (
+            <div className="mb-6 text-red-400 text-sm font-medium flex items-center justify-center gap-2">
+              <AlertTriangle className="w-4 h-4" /> {error}
+            </div>
+          )}
+
+          <div className="text-center mt-10">
+            <button 
+              type="submit"
+              disabled={isScanning}
+              className="bg-primary-600 hover:bg-primary-500 text-white px-10 py-4 rounded-2xl font-bold transition-all shadow-xl shadow-primary-500/20 active:scale-95 disabled:opacity-50"
+            >
+              Analyze Both Websites
+            </button>
+          </div>
+        </form>
+      )}
+
+      {/* Results View */}
+      {results && (
+        <motion.div 
+          initial="hidden" animate="show"
+          variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.2 } } }}
+          className="max-w-5xl mx-auto"
+        >
+          {/* Winner Banner */}
+          <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }} className="mb-12 text-center">
+            <div className="inline-flex flex-col items-center justify-center bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 w-full max-w-2xl shadow-2xl backdrop-blur-xl">
+              <ShieldCheck className="w-12 h-12 text-emerald-500 mb-4" />
+              <h2 className="text-2xl font-bold text-white mb-2">
+                {results.siteA.score > results.siteB.score ? 'Website A' : results.siteA.score < results.siteB.score ? 'Website B' : 'Both Websites'}
+                <span className="text-slate-400 font-normal"> is currently winning.</span>
+              </h2>
+              <p className="text-emerald-400 font-medium">
+                {Math.abs(results.siteA.score - results.siteB.score) > 0 
+                  ? `Winning by a margain of ${Math.abs(results.siteA.score - results.siteB.score)} ethical points.` 
+                  : `It's a dead tie. Both platforms share exact ethical standing.`}
+              </p>
+            </div>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 gap-8 md:gap-12 relative">
+            <div className="absolute left-1/2 top-10 bottom-10 w-px bg-gradient-to-b from-transparent via-slate-800 to-transparent -translate-x-1/2 hidden md:block z-0"></div>
+            {renderResultCard(results.siteA, "Website A", results.siteA.score > results.siteB.score)}
+            {renderResultCard(results.siteB, "Website B", results.siteB.score > results.siteA.score)}
+          </div>
+
+          <div className="mt-16 text-center">
+            <button 
+              onClick={() => { setResults(null); setUrlA(''); setUrlB('') }}
+              className="bg-slate-800 hover:bg-slate-700 text-white px-8 py-3 rounded-xl font-bold transition-all"
+            >
+              Start New Comparison
+            </button>
+          </div>
+        </motion.div>
+      )}
+
+    </motion.main>
+  )
+}
+
+export default Compare

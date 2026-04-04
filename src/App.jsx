@@ -2,7 +2,8 @@ import { Routes, Route, Link, useNavigate } from 'react-router-dom'
 import Home from './pages/Home'
 import Results from './pages/Results'
 import HistoryPage from './pages/History'
-import { ShieldCheck, History } from 'lucide-react'
+import Compare from './pages/Compare'
+import { ShieldCheck, History, Scale } from 'lucide-react'
 
 function App() {
   const navigate = useNavigate()
@@ -25,6 +26,9 @@ function App() {
             <div className="hidden md:block">
               <div className="flex items-center gap-8 text-sm font-medium text-slate-300">
                 <Link to="/" className="hover:text-primary-400 transition-colors">Dashboard</Link>
+                <Link to="/compare" className="hover:text-primary-400 transition-colors flex items-center gap-1">
+                  <Scale className="w-4 h-4" /> Compare
+                </Link>
                 <Link to="/history" className="hover:text-primary-400 transition-colors flex items-center gap-1">
                   <History className="w-4 h-4" /> History
                 </Link>
@@ -43,6 +47,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/results" element={<Results />} />
         <Route path="/history" element={<HistoryPage />} />
+        <Route path="/compare" element={<Compare />} />
       </Routes>
 
       {/* Shared Footer */}
