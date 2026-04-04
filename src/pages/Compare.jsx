@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { 
@@ -17,6 +17,7 @@ import {
 
 function Compare() {
   const location = useLocation()
+  const navigate = useNavigate()
   const [urlA, setUrlA] = useState('')
   const [urlB, setUrlB] = useState('')
   const [isScanning, setIsScanning] = useState(false)
@@ -263,6 +264,23 @@ function Compare() {
           </div>
         </div>
       )}
+
+      {/* Back Navigation */}
+      <div className="mb-8 flex justify-start">
+        <button 
+          onClick={() => {
+            if (location.state?.from === '/history') {
+              navigate('/history')
+            } else {
+              navigate('/')
+            }
+          }}
+          className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors group px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl w-fit"
+        >
+          <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+          <span className="hidden sm:inline">Back</span>
+        </button>
+      </div>
 
       {/* Header */}
       <div className="text-center max-w-2xl mx-auto mb-16">

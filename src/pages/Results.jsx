@@ -140,7 +140,13 @@ function Results() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div className="flex items-center gap-4">
           <button 
-            onClick={() => navigate('/')}
+            onClick={() => {
+              if (location.state?.from === '/history') {
+                navigate('/history')
+              } else {
+                navigate('/')
+              }
+            }}
             className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors group px-4 py-2 bg-slate-900 border border-slate-800 rounded-xl"
           >
             <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
@@ -275,9 +281,6 @@ function Results() {
                       <p className="text-sm text-slate-200 mt-1">{pattern.suggestion}</p>
                     </div>
                   </div>
-                  <button className="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-2 group/btn">
-                    Details <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                  </button>
                 </div>
               </div>
               </div>

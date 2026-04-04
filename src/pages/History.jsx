@@ -166,7 +166,7 @@ const HistoryPage = () => {
                       <p className={`text-3xl font-black mt-2 ${comp.winner === 'siteB' ? 'text-emerald-500' : 'text-slate-300'}`}>{comp.siteB.score}</p>
                     </div>
                   </div>
-                  <Link to="/compare" state={{ results: { siteA: comp.siteA, siteB: comp.siteB } }} className="block w-full text-center bg-slate-800 hover:bg-slate-700 text-slate-300 py-3 mt-6 rounded-2xl text-sm font-semibold transition-all">
+                  <Link to="/compare" state={{ results: { siteA: comp.siteA, siteB: comp.siteB }, from: '/history' }} className="block w-full text-center bg-slate-800 hover:bg-slate-700 text-slate-300 py-3 mt-6 rounded-2xl text-sm font-semibold transition-all">
                     View Full Comparison
                   </Link>
                 </motion.div>
@@ -199,7 +199,7 @@ const HistoryPage = () => {
                   {audit.patterns?.length || 0} Patterns
                 </div>
               </div>
-              <Link to="/results" state={{ auditData: audit }} className="block w-full text-center bg-slate-800 hover:bg-slate-700 text-slate-300 py-3 rounded-2xl text-sm font-semibold transition-all">
+              <Link to="/results" state={{ auditData: audit, from: '/history' }} className="block w-full text-center bg-slate-800 hover:bg-slate-700 text-slate-300 py-3 rounded-2xl text-sm font-semibold transition-all">
                 View Details
               </Link>
             </motion.div>
