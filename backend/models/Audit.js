@@ -1,13 +1,18 @@
 const mongoose = require('mongoose');
 
 const AuditSchema = new mongoose.Schema({
+  type: {
+    type: String,
+    enum: ['single', 'comparison'],
+    default: 'single'
+  },
   url: {
     type: String,
-    required: true,
+    required: function() { return this.type === 'single'; }
   },
   score: {
     type: Number,
-    required: true,
+    required: function() { return this.type === 'single'; }
   },
   patterns: [
     {
@@ -17,6 +22,22 @@ const AuditSchema = new mongoose.Schema({
       suggestion: { type: String },
     }
   ],
+  comparison: {
+    siteA: {
+      url: String,
+      score: Number,
+      patternsCount: Number,
+      patterns: Array
+    },
+    siteB: {
+      url: String,
+      score: Number,
+      patternsCount: Number,
+      patterns: Array
+    },
+    winner: String,
+    scoreDifference: Number
+  },
   createdAt: {
     type: Date,
     default: Date.now,

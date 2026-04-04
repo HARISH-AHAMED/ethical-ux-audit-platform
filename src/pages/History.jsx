@@ -7,7 +7,8 @@ import {
   AlertTriangle, 
   ArrowLeft,
   ShieldCheck,
-  Search
+  Search,
+  Scale
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 
@@ -83,13 +84,52 @@ const HistoryPage = () => {
           }}
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
-          {audits.map((audit) => (
+          {audits.map((audit) => {
+            if (audit.type === 'comparison') {
+              const comp = audit.comparison;
+              return (
+                <motion.div 
+                  key={audit._id} 
+                  variants={{ hidden: { opacity: 0, scale: 0.95 }, show: { opacity: 1, scale: 1 } }}
+                  className="bg-slate-900 border border-slate-800 hover:border-primary-500/30 p-6 rounded-3xl transition-all md:col-span-2"
+                >
+                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <div>
+                      <h3 className="text-xl font-bold bg-gradient-to-r from-primary-400 to-primary-600 bg-clip-text text-transparent flex items-center gap-2">
+                        <Scale className="w-5 h-5 text-primary-500" /> Comparison Audit
+                      </h3>
+                      <p className="text-xs text-slate-500 flex items-center gap-1 mt-1">
+                        <Calendar className="w-3 h-3" /> {new Date(audit.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div className="text-xs font-bold px-3 py-1.5 bg-slate-800 rounded-full text-slate-300 border border-slate-700">
+                      Winner: {comp.winner === 'siteA' ? comp.siteA.url : comp.winner === 'siteB' ? comp.siteB.url : 'Tie'} 
+                      {comp.winner !== 'tie' && ` (+${comp.scoreDifference})`}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className={`p-4 rounded-2xl border ${comp.winner === 'siteA' ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-slate-950 border-slate-800'}`}>
+                      <p className="text-sm text-slate-400 truncate w-full" title={comp.siteA.url}>{comp.siteA.url}</p>
+                      <p className={`text-3xl font-black mt-2 ${comp.winner === 'siteA' ? 'text-emerald-500' : 'text-slate-300'}`}>{comp.siteA.score}</p>
+                    </div>
+                    <div className={`p-4 rounded-2xl border ${comp.winner === 'siteB' ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-slate-950 border-slate-800'}`}>
+                      <p className="text-sm text-slate-400 truncate w-full" title={comp.siteB.url}>{comp.siteB.url}</p>
+                      <p className={`text-3xl font-black mt-2 ${comp.winner === 'siteB' ? 'text-emerald-500' : 'text-slate-300'}`}>{comp.siteB.score}</p>
+                    </div>
+                  </div>
+                  <Link to="/compare" state={{ results: { siteA: comp.siteA, siteB: comp.siteB } }} className="block w-full text-center bg-slate-800 hover:bg-slate-700 text-slate-300 py-3 mt-6 rounded-2xl text-sm font-semibold transition-all">
+                    View Full Comparison
+                  </Link>
+                </motion.div>
+              )
+            }
+
+            return (
             <motion.div 
               key={audit._id} 
               variants={{ hidden: { opacity: 0, scale: 0.95 }, show: { opacity: 1, scale: 1 } }}
               className="bg-slate-900 border border-slate-800 hover:border-primary-500/30 p-6 rounded-3xl transition-all"
             >
-
               <div className="flex justify-between items-start mb-6">
                 <div className="flex items-center gap-4">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold ${
@@ -100,21 +140,21 @@ const HistoryPage = () => {
                     {audit.score}
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-white">{audit.url.split('//')[1]?.split('/')[0]}</h3>
+                    <h3 className="text-lg font-bold text-white">{audit.url && audit.url.includes('//') ? audit.url.split('//')[1]?.split('/')[0] : audit.url}</h3>
                     <p className="text-xs text-slate-500 flex items-center gap-1">
                       <Calendar className="w-3 h-3" /> {new Date(audit.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
                 <div className="text-xs font-medium px-2 py-1 bg-slate-800 rounded text-slate-400">
-                  {audit.patterns.length} Patterns
+                  {audit.patterns?.length || 0} Patterns
                 </div>
               </div>
               <Link to="/results" state={{ auditData: audit }} className="block w-full text-center bg-slate-800 hover:bg-slate-700 text-slate-300 py-3 rounded-2xl text-sm font-semibold transition-all">
                 View Details
               </Link>
             </motion.div>
-          ))}
+          )})}
         </motion.div>
       )}
     </motion.div>

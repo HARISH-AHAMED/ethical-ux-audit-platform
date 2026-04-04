@@ -208,7 +208,7 @@ app.get('/api/history', async (req, res) => {
 
 // POST /api/scan - Advanced Heuristic Scan
 app.post('/api/scan', async (req, res) => {
-  let { url } = req.body;
+  let { url, saveToHistory = true } = req.body;
 
   if (!url) {
     return res.status(400).json({ error: 'URL is required' });
@@ -230,7 +230,7 @@ app.post('/api/scan', async (req, res) => {
 
     const auditResults = analyzeContent(response.data, targetUrl);
     
-    if (mongoose.connection.readyState === 1) {
+    if (saveToHistory && mongoose.connection.readyState === 1) {
       const newAudit = new Audit(auditResults);
       await newAudit.save();
     }
@@ -262,6 +262,22 @@ app.post('/api/scan', async (req, res) => {
     };
 
     res.json(fallbackResults);
+  }
+});
+
+// POST /api/history/compare - Save Unified Comparison Result
+app.post('/api/history/compare', async (req, res) => {
+  try {
+    const { type, comparison } = req.body;
+    if (type !== 'comparison' || !comparison) {
+      return res.status(400).json({ error: 'Invalid payload' });
+    }
+    const newAudit = new Audit({ type: 'comparison', comparison });
+    await newAudit.save();
+    res.json({ success: true, entry: newAudit });
+  } catch (error) {
+    console.error('❌ Compare Save Error:', error);
+    res.status(500).json({ error: 'Failed to save comparison history' });
   }
 });
 

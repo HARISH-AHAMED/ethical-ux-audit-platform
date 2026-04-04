@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { 
   ArrowLeft,
   Scale, 
@@ -13,11 +13,18 @@ import {
 } from 'lucide-react'
 
 function Compare() {
+  const location = useLocation()
   const [urlA, setUrlA] = useState('')
   const [urlB, setUrlB] = useState('')
   const [isScanning, setIsScanning] = useState(false)
   const [error, setError] = useState('')
-  const [results, setResults] = useState(null)
+  const [results, setResults] = useState(location.state?.results || null)
+
+  useEffect(() => {
+    if (location.state?.results) {
+      setResults(location.state.results)
+    }
+  }, [location.state])
 
   const validateUrl = (input) => {
     if (!input) return "URL cannot be empty."
@@ -49,16 +56,17 @@ function Compare() {
 
     try {
       // Execute both scans in parallel using the existing API endpoint
+      // We pass saveToHistory: false so we don't clutter the backend with single-site logs
       const [resA, resB] = await Promise.all([
         fetch('http://localhost:5000/api/scan', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url: urlA })
+          body: JSON.stringify({ url: urlA, saveToHistory: false })
         }),
         fetch('http://localhost:5000/api/scan', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url: urlB })
+          body: JSON.stringify({ url: urlB, saveToHistory: false })
         })
       ])
 
@@ -70,9 +78,27 @@ function Compare() {
       const dataB = await resB.json()
 
       // Small delay for the "processing" feel
-      setTimeout(() => {
+      setTimeout(async () => {
         setResults({ siteA: dataA, siteB: dataB })
         setIsScanning(false)
+        
+        try {
+          await fetch('http://localhost:5000/api/history/compare', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              type: 'comparison',
+              comparison: {
+                siteA: { url: dataA.url, score: dataA.score, patternsCount: dataA.patterns.length, patterns: dataA.patterns },
+                siteB: { url: dataB.url, score: dataB.score, patternsCount: dataB.patterns.length, patterns: dataB.patterns },
+                winner: dataA.score > dataB.score ? 'siteA' : dataB.score > dataA.score ? 'siteB' : 'tie',
+                scoreDifference: Math.abs(dataA.score - dataB.score)
+              }
+            })
+          })
+        } catch (e) {
+          console.error("Could not save to history", e)
+        }
       }, 1500)
 
     } catch (err) {
