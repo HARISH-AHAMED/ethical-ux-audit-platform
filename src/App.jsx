@@ -8,7 +8,10 @@ function App() {
   const navigate = useNavigate()
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-slate-950 text-slate-100 relative selection:bg-primary-500/30">
+      {/* Premium Background Glow */}
+      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary-900/20 via-slate-950/80 to-slate-950 -z-10 pointer-events-none"></div>
+
       {/* Shared Navbar */}
       <nav className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

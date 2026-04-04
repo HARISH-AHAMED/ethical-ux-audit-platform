@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   Search
 } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 const HistoryPage = () => {
   const [audits, setAudits] = useState([])
@@ -41,7 +42,12 @@ const HistoryPage = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
+    >
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-12">
         <div>
           <Link to="/" className="flex items-center text-sm text-slate-400 hover:text-primary-400 mb-4 transition-colors">
@@ -68,9 +74,22 @@ const HistoryPage = () => {
           <Link to="/" className="bg-primary-600 hover:bg-primary-700 text-white px-8 py-3 rounded-2xl font-semibold transition-all">Start Scanning</Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <motion.div 
+          initial="hidden"
+          animate="show"
+          variants={{
+            hidden: { opacity: 0 },
+            show: { opacity: 1, transition: { staggerChildren: 0.1 } }
+          }}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+        >
           {audits.map((audit) => (
-            <div key={audit._id} className="bg-slate-900 border border-slate-800 hover:border-primary-500/30 p-6 rounded-3xl transition-all">
+            <motion.div 
+              key={audit._id} 
+              variants={{ hidden: { opacity: 0, scale: 0.95 }, show: { opacity: 1, scale: 1 } }}
+              className="bg-slate-900 border border-slate-800 hover:border-primary-500/30 p-6 rounded-3xl transition-all"
+            >
+
               <div className="flex justify-between items-start mb-6">
                 <div className="flex items-center gap-4">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold ${
@@ -94,11 +113,11 @@ const HistoryPage = () => {
               <Link to="/results" state={{ auditData: audit }} className="block w-full text-center bg-slate-800 hover:bg-slate-700 text-slate-300 py-3 rounded-2xl text-sm font-semibold transition-all">
                 View Details
               </Link>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   )
 }
 

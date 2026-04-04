@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Search, Info, ShieldCheck, AlertTriangle } from 'lucide-react'
+import { motion } from 'framer-motion'
+
 
 function Home() {
   const [url, setUrl] = useState('')
@@ -61,7 +63,12 @@ function Home() {
   }
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 animate-in fade-in duration-700 relative">
+    <motion.main 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative"
+    >
       {/* Loading Overlay */}
       {isScanning && (
         <div className="fixed inset-0 z-[60] bg-slate-950/80 backdrop-blur-md flex flex-col items-center justify-center space-y-6">
@@ -140,19 +147,34 @@ function Home() {
       </div>
 
       {/* Mini Feature Section */}
-      <div className="mt-32 grid md:grid-cols-3 gap-8">
+      <motion.div 
+        initial="hidden"
+        animate="show"
+        variants={{
+          hidden: { opacity: 0 },
+          show: { opacity: 1, transition: { staggerChildren: 0.2, delayChildren: 0.3 } }
+        }}
+        className="mt-32 grid md:grid-cols-3 gap-8"
+      >
         {[
           { title: 'Forced Sign-ups', desc: 'Identifies traps that prevent user access without data.' },
           { title: 'Hidden Costs', desc: 'Detects unexpected charges added at the final step.' },
           { title: 'Fake Urgency', desc: 'Exposes manipulative countdowns and pressure tactics.' },
         ].map((feature, i) => (
-          <div key={i} className="p-8 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-primary-500/50 transition-all group cursor-default">
+          <motion.div 
+            key={i} 
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+            }}
+            className="p-8 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-primary-500/50 transition-all group cursor-default"
+          >
             <h3 className="text-xl font-bold mb-3 group-hover:text-primary-400">{feature.title}</h3>
             <p className="text-slate-400 group-hover:text-slate-300 transition-colors">{feature.desc}</p>
-          </div>
+          </motion.div>
         ))}
-      </div>
-    </main>
+      </motion.div>
+    </motion.main>
   )
 }
 
