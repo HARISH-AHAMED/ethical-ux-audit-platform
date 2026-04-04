@@ -299,43 +299,52 @@ function Compare() {
       {/* Comparison Form */}
       {!results && (
         <form onSubmit={handleCompare} className="max-w-4xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-6 mb-8 relative">
-            <motion.div 
-              animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-primary-600/20 rounded-full flex items-center justify-center text-xs font-black text-primary-400 z-10 border-2 border-primary-500/40 hidden md:flex backdrop-blur-md shadow-[0_0_15px_rgba(16,185,129,0.3)]"
-            >
-              VS
-            </motion.div>
-            
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 relative group overflow-hidden">
-              <div className="absolute top-0 left-0 w-1 h-full bg-slate-700 group-focus-within:bg-primary-500 transition-colors"></div>
-              <label className="block text-sm font-bold text-slate-300 mb-2">Website A</label>
-              <div className="flex items-center gap-3 bg-slate-950 border border-slate-800 rounded-xl p-3">
-                <Search className="w-5 h-5 text-slate-600" />
-                <input
-                  type="text"
-                  placeholder="e.g., booking.com"
-                  className="w-full bg-transparent border-none focus:ring-0 text-slate-100 placeholder:text-slate-600"
-                  value={urlA}
-                  onChange={(e) => { setUrlA(e.target.value); setError('') }}
-                />
+          <div className="relative mb-12">
+            <div className="grid md:grid-cols-2 gap-6 lg:gap-12 backdrop-blur-sm">
+              <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 relative group overflow-hidden shadow-2xl transition-all hover:border-primary-500/30">
+                <div className="absolute top-0 left-0 w-1.5 h-full bg-slate-700 group-focus-within:bg-primary-500 transition-colors"></div>
+                <label className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-4">Website A</label>
+                <div className="flex items-center gap-4 bg-slate-950/80 border border-slate-800 rounded-2xl p-4 transition-all focus-within:border-primary-500/50 focus-within:ring-4 focus-within:ring-primary-500/10">
+                  <Search className="w-5 h-5 text-slate-500" />
+                  <input
+                    type="text"
+                    placeholder="e.g., booking.com"
+                    className="w-full bg-transparent border-none focus:ring-0 text-slate-100 placeholder:text-slate-600 font-medium"
+                    value={urlA}
+                    onChange={(e) => { setUrlA(e.target.value); setError('') }}
+                  />
+                </div>
+              </div>
+
+              <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 relative group overflow-hidden shadow-2xl transition-all hover:border-primary-500/30">
+                <div className="absolute top-0 right-0 w-1.5 h-full bg-slate-700 group-focus-within:bg-primary-500 transition-colors"></div>
+                <label className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-4">Website B</label>
+                <div className="flex items-center gap-4 bg-slate-950/80 border border-slate-800 rounded-2xl p-4 transition-all focus-within:border-primary-500/50 focus-within:ring-4 focus-within:ring-primary-500/10">
+                  <Search className="w-5 h-5 text-slate-500" />
+                  <input
+                    type="text"
+                    placeholder="e.g., agoda.com"
+                    className="w-full bg-transparent border-none focus:ring-0 text-slate-100 placeholder:text-slate-600 font-medium"
+                    value={urlB}
+                    onChange={(e) => { setUrlB(e.target.value); setError('') }}
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 relative group overflow-hidden">
-              <div className="absolute top-0 right-0 w-1 h-full bg-slate-700 group-focus-within:bg-primary-500 transition-colors"></div>
-              <label className="block text-sm font-bold text-slate-300 mb-2">Website B</label>
-              <div className="flex items-center gap-3 bg-slate-950 border border-slate-800 rounded-xl p-3">
-                <Search className="w-5 h-5 text-slate-600" />
-                <input
-                  type="text"
-                  placeholder="e.g., agoda.com"
-                  className="w-full bg-transparent border-none focus:ring-0 text-slate-100 placeholder:text-slate-600"
-                  value={urlB}
-                  onChange={(e) => { setUrlB(e.target.value); setError('') }}
-                />
-              </div>
+            {/* VS Badge - Perfectly Centered over the cards */}
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none hidden md:block">
+              <motion.div 
+                animate={{ 
+                  scale: [1, 1.1, 1],
+                  rotate: [0, 5, -5, 0]
+                }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                className="w-14 h-14 bg-slate-950 rounded-full flex items-center justify-center border-4 border-slate-900 shadow-[0_0_30px_rgba(16,185,129,0.3)] relative"
+              >
+                <div className="absolute inset-0 rounded-full bg-primary-500/20 animate-ping opacity-20"></div>
+                <span className="text-sm font-black text-primary-400 relative z-10 italic">VS</span>
+              </motion.div>
             </div>
           </div>
 
