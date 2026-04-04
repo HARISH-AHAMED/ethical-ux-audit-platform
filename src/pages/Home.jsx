@@ -67,7 +67,8 @@ function Home() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative"
+      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative"
+      style={{ paddingTop: '5rem', paddingBottom: '5rem' }}
     >
       {/* Loading Overlay */}
       {isScanning && (
@@ -95,20 +96,22 @@ function Home() {
         </h1>
         
         <p className="text-lg text-slate-400 max-w-2xl mx-auto">
-          Our AI-powered platform detects dark patterns, forced sign-ups, and misleading CTAs
+          Our deterministic heuristic engine detects dark patterns, forced sign-ups, and misleading CTAs
           to help you build a more transparent web.
         </p>
 
-        <form onSubmit={handleAudit} className="max-w-3xl mx-auto mt-10">
+        <form onSubmit={handleAudit} className="max-w-3xl mx-auto mt-12">
           <div className="relative group">
-            <div className={`absolute -inset-1 bg-gradient-to-r from-primary-500 to-primary-700 rounded-2xl blur opacity-25 group-focus-within:opacity-50 transition duration-1000 ${error ? 'from-red-500 to-red-700 opacity-40' : ''}`}></div>
-            <div className={`relative flex items-center bg-slate-900 border ${error ? 'border-red-500/50' : 'border-slate-800'} rounded-xl p-2 shadow-2xl transition-colors`}>
-              <div className="flex-1 flex items-center px-4 gap-3">
-                <Search className={`w-5 h-5 ${error ? 'text-red-400' : 'text-slate-500'}`} />
+            <div className={`absolute -inset-1.5 bg-gradient-to-r from-primary-600 via-primary-500 to-indigo-500 rounded-3xl blur-lg opacity-20 group-focus-within:opacity-40 transition duration-1000 ${error ? 'from-red-500 to-red-700 opacity-40' : ''}`}></div>
+            <div className={`relative flex items-center bg-slate-900/80 backdrop-blur-xl border-2 ${error ? 'border-red-500/50' : 'border-slate-700/50'} rounded-2xl p-2.5 shadow-2xl shadow-slate-950/50 transition-all focus-within:border-primary-500/50`}>
+              <div className="flex-1 flex items-center px-5 gap-4">
+                <div className={`p-2 rounded-lg ${error ? 'bg-red-500/10' : 'bg-primary-500/10'}`}>
+                  <Search className={`w-5 h-5 ${error ? 'text-red-400' : 'text-primary-500'}`} />
+                </div>
                 <input
                   type="text"
-                  placeholder="Enter website URL (e.g., example.com)"
-                  className="w-full bg-transparent border-none focus:ring-0 text-slate-100 placeholder:text-slate-600 py-3"
+                  placeholder="Paste any website URL to begin audit..."
+                  className="w-full bg-transparent border-none focus:ring-0 focus:outline-none text-slate-100 placeholder:text-slate-500 py-3 text-lg"
                   value={url}
                   onChange={(e) => {
                     setUrl(e.target.value)
@@ -119,7 +122,7 @@ function Home() {
               <button 
                 type="submit"
                 disabled={isScanning}
-                className="bg-primary-600 hover:bg-primary-500 text-white px-8 py-3 rounded-lg font-bold transition-all whitespace-nowrap active:scale-95 disabled:opacity-50"
+                className="bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-400 text-white px-10 py-3.5 rounded-xl font-bold transition-all whitespace-nowrap active:scale-95 disabled:opacity-50 shadow-lg shadow-primary-500/25 text-sm uppercase tracking-wider"
               >
                 Scan Website
               </button>
